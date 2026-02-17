@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 from auth import get_auth_token
 from gmail_service import gmail_api_connection
+from organizer import get_actions_for_sender
+from organizer import apply_actions
 
 def run():
 	#Cargamos las variables que tenemos en .env
@@ -15,24 +17,27 @@ def run():
 	# Conectamos con Gmail API: Creamos el objeto service que nos permite llamar a la API de Gmail.
 	service = gmail_api_connection(creds)
 
-	# Pedimos los últimos 10 correos
-	results = service.users().messages().list(userId='me', maxResults=10).execute()
+	# Pedimos los últimos 10 correos (maxResults=10) o en una query de fecha (newer...)
+	date = os.getenv("DATE", "newer_than:7d")
+	results = service.users().messages().list(userId='me', q=date).execute()
 	messages = results.get('messages', [])
 	if not messages:
 		print("No emails available.")
 	else:
-		print("Últimos 10 correos:")
 		for msg in messages:
 			try:
 				m = service.users().messages().get(userId='me', id=msg['id']).execute()
-				subject = ''
 				sender = ''
 				for header in m['payload']['headers']:
 					if header['name'] == 'From':
 						sender = header['value']
-					elif header['name'] == 'Subject':
-						subject = header['value']
-				print(f"- {subject} from {sender}")
+				if sender:
+					actions = get_actions_for_sender(sender)
+					if actions:
+						apply_actions(service, msg["id"], actions)
+						print(f"Applied actions {actions} to message from {sender}")
+					else:
+						print(f"No rule matched for message from {sender}")
 			except Exception as e:
 				print(f"Error readind the message {msg['id']}: {e}")
 
