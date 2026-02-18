@@ -1,9 +1,11 @@
 RULES = [
 	{
-		"name": "Job Alerts",
-		"condition": {
-			"sender_contains": ["jobalerts-noreply@linkedin.com", "glassdoor.com"]
-		},
+		"name": "Empleo_alertas",
+		"conditions": [
+			{
+				"sender_contains": ["jobalerts-noreply@linkedin.com", "glassdoor.com", "jobs2web.com"]
+			},
+		],
 		"actions": {
 			"add_label": "Empleo_alertas",
 			"archive": True,
@@ -11,25 +13,93 @@ RULES = [
 		}
 	},
 	{
-		"name": "Utilities",
-		"condition": {
-			"sender_contains": ["endesa.com", "endesaclientes.com",  "o2online.es", "redexis.es"]
-		},
+		"name": "Empleo",
+		"conditions": [
+			{
+				"sender_contains": ["linkedin.com", "infojobs.net"]
+			},
+		],
+		"actions": {
+			"add_label": "Empleo",
+			"archive": True,
+			"mark_as_read": False
+		}
+	},
+	{
+		"name": "Formación",
+		"conditions": [
+			{
+				"sender_contains": ["coursera.org", "udemy", "edx"]
+			},
+		],
+		"actions": {
+			"add_label": "Formación",
+			"archive": True,
+			"mark_as_read": False
+		}
+	},
+	{
+		"name": "Servicios",
+		"conditions": [
+			{
+				"sender_contains": ["endesa.com", "endesaclientes.com",  "o2online.es", "redexis.es"]
+			}
+		],
 		"actions": {
 			"add_label": "Servicios",
 			"archive": True,
-			"mark_as_read": True
+			"mark_as_read": False
 		}
 	},
 	{
 		"name": "42",
-		"condition": {
-			"sender_contains": ["42.fr"]
-		},
+		"conditions": [
+			{
+				"sender_contains": ["42.fr", "42madrid.com"]
+			},
+			{
+				"subject_contains": ["Marvin", "Intra"]
+			},
+			{
+				"body_contains": ["42 Madrid", "42Madrid"]
+			}
+		],
 		"actions": {
 			"add_label": "42",
 			"archive": True,
-			"mark_as_read": True
+			"mark_as_read": False
+		}
+	},
+	{
+		"name": "Familia",
+		"conditions": [
+			{
+				"sender_contains": ["mcmichaelson", "miguel.vidal.hernando", "miguelvidalhernando", "ignacio.vidal.hernando", "ignaciovidalhernando", "murrayhead85", "bovido55", "celiahernandodefrutos", "vincenza.verdicchio"]
+			}
+		],
+		"actions": {
+			"add_label": "Familia",
+			"archive": True,
+			"mark_as_read": False
+		}
+	},
+	{
+		"name": "Promos",
+		"conditions": [
+			{
+				"has_unsubscribe_header": True
+			},
+			{
+				"subject_contains": ["oferta", "promo", "descuento"]
+			},
+			{
+				"body_contains": ["oferta", "promo", "descuento","unsubscribe", "Darme de baja", "Darse de baja", "no deseas seguir recibiendo", "cancelar tu suscripción", "Cancelar suscripción"],
+			}
+		],
+		"actions": {
+			"add_label": "Promos",
+			"archive": True,
+			"mark_as_read": False
 		}
 	}
 ]
