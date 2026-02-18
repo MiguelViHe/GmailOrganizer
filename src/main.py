@@ -18,7 +18,7 @@ def run():
 
 	# Pedimos los últimos 10 correos (maxResults=10) o en una query de fecha (newer...)
 	date = os.getenv("DATE", "newer_than:7d")
-	results = service.users().messages().list(userId='me', maxResults=3 ,q=date).execute()
+	results = service.users().messages().list(userId='me', q=date).execute()
 	# print(results)
 	messages = results.get('messages', [])
 	# print(messages)
@@ -30,13 +30,9 @@ def run():
 				m = service.users().messages().get(userId='me', id=msg['id']).execute()
 				mail_data = extract_mail_data(m)
 				actions = get_actions(mail_data)
-				print(f"actions: {actions}")
-				# 	actions = get_actions(mail_data)
-				# 	if actions:
-				# 		apply_actions(service, msg["id"], actions)
-				# 		print(f"Applied actions {actions} to message from {sender}")
-				# 	else:
-				# 		print(f"No rule matched for message from {sender}")
+				print(f"ACTIONS: {actions}")
+				if actions:
+					apply_actions(service, msg["id"], actions, mail_data)
 			except Exception as e:
 				print(f"Error readind the message {msg['id']}: {e}")
 

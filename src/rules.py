@@ -3,7 +3,7 @@ RULES = [
 		"name": "Empleo_alertas",
 		"conditions": [
 			{
-				"sender_contains": ["jobalerts-noreply@linkedin.com", "glassdoor.com", "jobs2web.com"]
+				"sender_contains": ["jobalerts-noreply@linkedin.com", "jobs-listings@linkedin.com", "glassdoor.com", "jobs2web.com"]
 			},
 		],
 		"actions": {
@@ -62,6 +62,22 @@ RULES = [
 			},
 			{
 				"body_contains": ["42 Madrid", "42Madrid"]
+			}
+		],
+		"actions": {
+			"add_label": "42",
+			"archive": True,
+			"mark_as_read": False
+		}
+	},
+	{
+		"name": "Compras",
+		"conditions": [
+			{
+				"subject_contains": ["Confirmación de pedido", "Recibo de tu pedido"]
+			},
+			{
+				"body_contains": ["resumen de pedido", "IMPORTE TOTAL", "precio total", "pago total", "MÉTODO DE PAGO", "Número de pedido", "Dirección de facturación", "Dirección de entrega", "Información de envío"]
 			}
 		],
 		"actions": {
