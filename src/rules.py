@@ -1,9 +1,10 @@
 RULES = [
 	{
 		"name": "Empleo_alertas",
+		"priority": 100,
 		"conditions": [
 			{
-				"sender_contains": ["jobalerts-noreply@linkedin.com", "jobs-listings@linkedin.com", "glassdoor.com", "jobs2web.com"]
+				"sender_contains": ["jobalerts-noreply@linkedin.com", "jobs-listings@linkedin.com", "jobs-noreply@linkedin.com", "glassdoor.com", "jobs2web.com"]
 			},
 		],
 		"actions": {
@@ -14,6 +15,7 @@ RULES = [
 	},
 	{
 		"name": "Empleo",
+		"priority": 90,
 		"conditions": [
 			{
 				"sender_contains": ["linkedin.com", "infojobs.net"]
@@ -27,6 +29,7 @@ RULES = [
 	},
 	{
 		"name": "Formación",
+		"priority": 100,
 		"conditions": [
 			{
 				"sender_contains": ["coursera.org", "udemy", "edx"]
@@ -40,6 +43,7 @@ RULES = [
 	},
 	{
 		"name": "Servicios",
+		"priority": 100,
 		"conditions": [
 			{
 				"sender_contains": ["endesa.com", "endesaclientes.com",  "o2online.es", "redexis.es"]
@@ -53,6 +57,7 @@ RULES = [
 	},
 	{
 		"name": "42",
+		"priority": 60,
 		"conditions": [
 			{
 				"sender_contains": ["42.fr", "42madrid.com"]
@@ -72,6 +77,7 @@ RULES = [
 	},
 	{
 		"name": "Compras",
+		"priority": 40,
 		"conditions": [
 			{
 				"subject_contains": ["Confirmación de pedido", "Recibo de tu pedido"]
@@ -81,13 +87,14 @@ RULES = [
 			}
 		],
 		"actions": {
-			"add_label": "42",
+			"add_label": "Compras",
 			"archive": True,
 			"mark_as_read": False
 		}
 	},
 	{
 		"name": "Familia",
+		"priority": 80,
 		"conditions": [
 			{
 				"sender_contains": ["mcmichaelson", "miguel.vidal.hernando", "miguelvidalhernando", "ignacio.vidal.hernando", "ignaciovidalhernando", "murrayhead85", "bovido55", "celiahernandodefrutos", "vincenza.verdicchio"]
@@ -101,6 +108,7 @@ RULES = [
 	},
 	{
 		"name": "Promos",
+		"priority": 10,
 		"conditions": [
 			{
 				"has_unsubscribe_header": True

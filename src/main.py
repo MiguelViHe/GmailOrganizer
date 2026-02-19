@@ -4,6 +4,12 @@ from dotenv import load_dotenv
 from auth import get_auth_token
 from gmail_service import gmail_api_connection
 from organizer import get_actions, apply_actions, extract_mail_data
+from utils import create_label
+
+def get_labels_map(service):
+	"""Return a dictionary name → id of labels"""
+	labels = service.users().labels().list(userId="me").execute().get("labels", [])
+	return {label["name"]: label["id"] for label in labels}
 
 def run():
 	#Cargamos las variables que tenemos en .env
@@ -25,14 +31,21 @@ def run():
 	if not messages:
 		print("No emails available.")
 	else:
+		print("llego")
+		labels_map = get_labels_map(service)
+		if not labels_map.get("Processed"):
+			print("entro")
+			create_label("Processed", "show", "labelHide", service, labels_map)
+		# print(labels_map)
 		for msg in messages:
 			try:
 				m = service.users().messages().get(userId='me', id=msg['id']).execute()
 				mail_data = extract_mail_data(m)
 				actions = get_actions(mail_data)
-				print(f"ACTIONS: {actions}")
 				if actions:
-					apply_actions(service, msg["id"], actions, mail_data)
+					# print(f"ACTIONS: {actions}")
+					# print(f"msg id = {msg["id"]} subject = {mail_data["subject"]}")
+					apply_actions(service, msg["id"], actions, mail_data, labels_map)
 			except Exception as e:
 				print(f"Error readind the message {msg['id']}: {e}")
 

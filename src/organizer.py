@@ -1,4 +1,5 @@
 from rules import RULES
+from utils import create_label
 
 def get_body(message):
 	import base64
@@ -85,20 +86,21 @@ def matches_rule(mail_data, rule):
 	return False
 
 def get_actions(mail_data):
-	matched_actions = []
+	matched_rules = []
+	top_rules_actions = []
+
 	for rule in RULES:
 		# print(f"rule_name={rule["name"]}")
 		if matches_rule(mail_data, rule):
 			# print(f"MATCHED RULE: {rule["name"]}")
-			matched_actions.append(rule["actions"])
-	return matched_actions
+			matched_rules.append(rule)
+	if matched_rules:
+		max_priority = max(rule.get("priority", 0) for rule in matched_rules)
+		top_rules_actions = [r.get("actions") for r in matched_rules if r.get("priority", 0) == max_priority]
+	return top_rules_actions
 
-	
-
-def apply_actions(service, msg_id, actions, mail_data):
-	"""Aplica acciones sobre un mensaje: añadir etiqueta, archivar, marcar como leído"""
-
-	labels = service.users().labels().list(userId="me").execute().get('labels', [])
+def apply_actions(service, msg_id, actions, mail_data, labels_map):
+	"""Aplica acciones sobre un mensaje: añadir etiqueta, archivar, marcar como leído..."""
 	add_labels = set()
 	remove_labels = set()
 
@@ -107,26 +109,18 @@ def apply_actions(service, msg_id, actions, mail_data):
 			label_name = action["add_label"]
 			label_id = None
 
-			for l in labels:
-				if l["name"] == label_name:
-					label_id = l["id"]
-					break
+			label_id = labels_map.get(label_name)
 
 			if not label_id:
-				new_label = {
-					"name": label_name,
-					"messageListVisibility": "show",
-					"labelListVisibility": "labelShow",
-				}
-				created_label = service.users().labels().create(userId="me", body=new_label).execute()
-				label_id = created_label["id"]
-
+				label_id = create_label(label_name, "show", "labelShow", service, labels_map)
 			add_labels.add(label_id)
+
 		if action.get("archive") and "INBOX" in mail_data["labels_ids"]:
 			remove_labels.add("INBOX")
 		if action.get("mark_as_read") and "UNREAD" in mail_data["labels_ids"]:
 			remove_labels.add("UNREAD")
-
+		if "Processed" not in mail_data["labels_ids"]:
+			add_labels.add(labels_map.get("Processed"))
 	body = {
 		"addLabelIds": list(add_labels),
 		"removeLabelIds": list(remove_labels)
