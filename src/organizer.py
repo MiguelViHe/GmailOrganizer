@@ -1,5 +1,8 @@
+import logging
 from rules import RULES
 from utils import create_label
+
+logger = logging.getLogger(__name__)
 
 def get_body(message):
 	import base64
@@ -49,30 +52,30 @@ def matches_condition_block(mail_data, block):
 	"""Descripción de la función"""
 	# sender_contains
 	if "sender_contains" in block:
-		# print(f"		sender = {mail_data["sender"]}")
+		logger.debug(f"		sender = {mail_data["sender"]}")
 		if any(pattern.lower() in mail_data["sender"].lower() for pattern in block.get("sender_contains", [])):
-			# print(f"		pattern coincidente in sender")
+			logger.debug(f"		pattern coincidente in subject")
 			return True
 
 	# subject_contains
 	if "subject_contains" in block:
-		# print(f"		subject = {mail_data["subject"]}")
+		logger.debug(f"		subject = {mail_data["subject"]}")
 		if any(pattern.lower() in mail_data["subject"].lower() for pattern in block.get("subject_contains", [])):
-			# print(f"		pattern coincidente in subject")
+			logger.debug(f"		pattern coincidente in subject")
 			return True
 
 	# body_contains
 	if "body_contains" in block:
-		# print("		body... ")
+		logger.debug("		body... ")
 		if any(pattern.lower() in mail_data["body"].lower() for pattern in block.get("body_contains", [])):
-			# print(f"		pattern coincidente in body")
+			logger.debug(f"		pattern coincidente in body")
 			return True
 
 	# has_unsubscribe_header
 	if "has_unsubscribe_header" in block:
 		if block.get("has_unsubscribe_header"):
 			if mail_data["list_unsubscribe"]:
-				# print(f"		has_unsubscribe_header SI")
+				logger.debug(f"		has_unsubscribe_header SI")
 				return True
 
 	return False
@@ -80,7 +83,7 @@ def matches_condition_block(mail_data, block):
 def matches_rule(mail_data, rule):
 	"""Descripción de la función"""
 	for block in rule.get("conditions", []):
-		# print(f"	mail= {mail_data["subject"]}, block = {block}")
+		logger.debug(f"	mail= {mail_data["subject"]}, block = {block}")
 		if matches_condition_block(mail_data, block):
 			return True
 	return False
@@ -90,9 +93,9 @@ def get_actions(mail_data):
 	top_rules_actions = []
 
 	for rule in RULES:
-		# print(f"rule_name={rule["name"]}")
+		logger.debug(f"rule_name={rule["name"]}")
 		if matches_rule(mail_data, rule):
-			# print(f"MATCHED RULE: {rule["name"]}")
+			logger.debug(f"MATCHED RULE: {rule["name"]}")
 			matched_rules.append(rule)
 	if matched_rules:
 		max_priority = max(rule.get("priority", 0) for rule in matched_rules)
@@ -127,5 +130,4 @@ def apply_actions(service, msg_id, actions, mail_data, labels_map):
 	}
 
 	#Aplicamos los cambios
-	print(f"msg_id={msg_id} - body = {body}")
 	service.users().messages().modify(userId="me", id=msg_id, body=body).execute()

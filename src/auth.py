@@ -1,9 +1,11 @@
 import os.path
+import logging
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.exceptions import RefreshError
 from google.auth.transport.requests import Request
 
+logger = logging.getLogger(__name__)
 
 # SCOPES indica qué permisos vamos a pedir a Gmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
@@ -20,7 +22,7 @@ def get_auth_token(credentials_path, token_path):
 			try:
 				creds.refresh(Request())
 			except RefreshError:
-				print("Refresh token inválido. Se requiere nuevo login.")
+				logging.warning("Refresh token inválido. Se requiere nuevo login.")
 				os.remove(token_path)
 				creds = None
 		# Si no hay credenciales válidas, pedimos login en el navegador
@@ -33,8 +35,8 @@ def get_auth_token(credentials_path, token_path):
 				token.write(creds.to_json())
 		return creds
 	except FileNotFoundError:
-		print("No se encontró credentials.json. Verifica la ruta.")
+		logger.error("No se encontró credentials.json. Verifica la ruta.")
 		raise
 	except Exception as e:
-		print(f"Error durante la autenticación: {e}")
+		logger.critical(f"Error durante la autenticación: {e}")
 		raise

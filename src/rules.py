@@ -4,8 +4,11 @@ RULES = [
 		"priority": 100,
 		"conditions": [
 			{
-				"sender_contains": ["jobalerts-noreply@linkedin.com", "jobs-listings@linkedin.com", "jobs-noreply@linkedin.com", "glassdoor.com", "jobs2web.com"]
+				"sender_contains": ["jobalerts-noreply@linkedin.com", "jobs-listings@linkedin.com", "glassdoor.com", "jobs2web.com"]
 			},
+			{
+				"subject_contains": ["Nuevos empleos"]
+			}
 		],
 		"actions": {
 			"add_label": "Empleo_alertas",
@@ -18,8 +21,14 @@ RULES = [
 		"priority": 90,
 		"conditions": [
 			{
-				"sender_contains": ["linkedin.com", "infojobs.net"]
+				"sender_contains": ["linkedin.com", "infojobs.net", "HRsystem@capgemini.com"]
 			},
+			{
+				"subject_contains": ["solicitud de empleo", "se ha enviado tu solicitud"]
+			},
+			{
+				"body_contains": ["solicitud para el puesto"]
+			}
 		],
 		"actions": {
 			"add_label": "Empleo",
@@ -80,7 +89,7 @@ RULES = [
 		"priority": 40,
 		"conditions": [
 			{
-				"subject_contains": ["Confirmación de pedido", "Recibo de tu pedido"]
+				"subject_contains": ["Confirmación de pedido", "Recibo de tu pedido", "Recibo de tu pedido", "Recibo de su pago", "pago aceptado", "Pedido en preparación", "Pedido enviado"]
 			},
 			{
 				"body_contains": ["resumen de pedido", "IMPORTE TOTAL", "precio total", "pago total", "MÉTODO DE PAGO", "Número de pedido", "Dirección de facturación", "Dirección de entrega", "Información de envío"]
@@ -122,6 +131,23 @@ RULES = [
 		],
 		"actions": {
 			"add_label": "Promos",
+			"archive": True,
+			"mark_as_read": False
+		}
+	},
+	{
+		"name": "Running",
+		"priority": 30,
+		"conditions": [
+			{
+				"sender_contains": ["circuito4desafios", "inscripciones@youevent.com.es", "no-reply@rockthesport.com"]
+			},
+			{
+				"body_contains": ["Marathon", "Maratón", "Trail","medalla finisher", "finisher", "recogida de dorsales", "no federado"]
+			}
+		],
+		"actions": {
+			"add_label": "Running",
 			"archive": True,
 			"mark_as_read": False
 		}
