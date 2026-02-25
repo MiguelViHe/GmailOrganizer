@@ -89,7 +89,12 @@ RULES = [
 		"priority": 40,
 		"conditions": [
 			{
-				"subject_contains": ["Confirmación de pedido", "Recibo de tu pedido", "Recibo de tu pedido", "Recibo de su pago", "pago aceptado", "Pedido en preparación", "Pedido enviado"]
+				"subject_contains": 
+				[
+					"Confirmación de pedido", "Recibo de tu pedido", "Recibo de tu pedido",
+					"Recibo de su pago", "pago aceptado", "Pedido en preparación", "Pedido enviado",
+					"Información sobre su envío"
+				]
 			},
 			{
 				"body_contains": ["resumen de pedido", "IMPORTE TOTAL", "precio total", "pago total", "MÉTODO DE PAGO", "Número de pedido", "Dirección de facturación", "Dirección de entrega", "Información de envío"]

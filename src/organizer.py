@@ -9,7 +9,7 @@ def get_body(message):
 
 	payload = message.get("payload", {})
 
-	# Caso multipart
+	# Multipart case
 	if "parts" in payload:
 		for part in payload["parts"]:
 			if part["mimeType"] == "text/plain":
@@ -17,7 +17,7 @@ def get_body(message):
 				if data:
 					return base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
 
-	# Caso simple
+	# Simple case
 	data = payload.get("body", {}).get("data")
 	if data:
 		return base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
@@ -26,12 +26,13 @@ def get_body(message):
 
 
 def extract_mail_data(message):
-	"""Extrae el sender el subject y el body de un mensaje y lo devuelve como un diccionario junto con los label_ids"""
+	"""Extract the sender, subject, and body from a message, returning a dictionary along with label IDs"""
 	sender = ""
 	subject = ""
 	body = ""
 	list_unsubscribe = False
 	headers = message["payload"].get("headers", [])
+	
 	for header in headers:
 		if header["name"] == "From":
 			sender = header["value"]
@@ -39,7 +40,9 @@ def extract_mail_data(message):
 			subject = header["value"]
 		if header["name"] == "List-Unsubscribe":
 			list_unsubscribe = True
+
 	body = get_body(message)
+
 	return {
 		"sender": sender,
 		"subject": subject,
@@ -48,70 +51,75 @@ def extract_mail_data(message):
 		"labels_ids": message.get("labelIds", [])
 	}
 
+
 def matches_condition_block(mail_data, block):
-	"""Descripción de la función"""
+	"""Check if a mail_data matches a single condition block"""
+	
 	# sender_contains
 	if "sender_contains" in block:
-		logger.debug(f"		sender = {mail_data["sender"]}")
+		logger.debug(f"    sender = {mail_data['sender']}")
 		if any(pattern.lower() in mail_data["sender"].lower() for pattern in block.get("sender_contains", [])):
-			logger.debug(f"		pattern coincidente in subject")
+			logger.debug("    matching pattern found in sender")
 			return True
 
 	# subject_contains
 	if "subject_contains" in block:
-		logger.debug(f"		subject = {mail_data["subject"]}")
+		logger.debug(f"    subject = {mail_data['subject']}")
 		if any(pattern.lower() in mail_data["subject"].lower() for pattern in block.get("subject_contains", [])):
-			logger.debug(f"		pattern coincidente in subject")
+			logger.debug("    matching pattern found in subject")
 			return True
 
 	# body_contains
 	if "body_contains" in block:
-		logger.debug("		body... ")
+		logger.debug("    checking body...")
 		if any(pattern.lower() in mail_data["body"].lower() for pattern in block.get("body_contains", [])):
-			logger.debug(f"		pattern coincidente in body")
+			logger.debug("    matching pattern found in body")
 			return True
 
 	# has_unsubscribe_header
 	if "has_unsubscribe_header" in block:
-		if block.get("has_unsubscribe_header"):
-			if mail_data["list_unsubscribe"]:
-				logger.debug(f"		has_unsubscribe_header SI")
-				return True
+		if block.get("has_unsubscribe_header") and mail_data["list_unsubscribe"]:
+			logger.debug("    has_unsubscribe_header = YES")
+			return True
 
 	return False
 
+
 def matches_rule(mail_data, rule):
-	"""Descripción de la función"""
+	"""Check if mail_data matches any condition block in the rule"""
 	for block in rule.get("conditions", []):
-		logger.debug(f"	mail= {mail_data["subject"]}, block = {block}")
+		logger.debug(f"    mail={mail_data['subject']}, block={block}")
 		if matches_condition_block(mail_data, block):
 			return True
 	return False
 
+
 def get_actions(mail_data):
+	"""Return a list of actions to apply based on matched rules"""
 	matched_rules = []
 	top_rules_actions = []
 
 	for rule in RULES:
-		logger.debug(f"rule_name={rule["name"]}")
+		logger.debug(f"rule_name={rule['name']}")
 		if matches_rule(mail_data, rule):
-			logger.debug(f"MATCHED RULE: {rule["name"]}")
+			logger.debug(f"MATCHED RULE: {rule['name']}")
 			matched_rules.append(rule)
+
 	if matched_rules:
 		max_priority = max(rule.get("priority", 0) for rule in matched_rules)
 		top_rules_actions = [r.get("actions") for r in matched_rules if r.get("priority", 0) == max_priority]
+
 	return top_rules_actions
 
+
 def apply_actions(service, msg_id, actions, mail_data, labels_map):
-	"""Aplica acciones sobre un mensaje: añadir etiqueta, archivar, marcar como leído..."""
+	"""Apply actions to a message: add label, archive, mark as read, etc."""
 	add_labels = set()
 	remove_labels = set()
 
 	for action in actions:
 		if "add_label" in action:
 			label_name = action["add_label"]
-			label_id = None
-
 			label_id = labels_map.get(label_name)
 
 			if not label_id:
@@ -124,10 +132,11 @@ def apply_actions(service, msg_id, actions, mail_data, labels_map):
 			remove_labels.add("UNREAD")
 		if "Processed" not in mail_data["labels_ids"]:
 			add_labels.add(labels_map.get("Processed"))
+
 	body = {
 		"addLabelIds": list(add_labels),
 		"removeLabelIds": list(remove_labels)
 	}
 
-	#Aplicamos los cambios
+	# Apply the label modifications
 	service.users().messages().modify(userId="me", id=msg_id, body=body).execute()

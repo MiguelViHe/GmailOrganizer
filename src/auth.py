@@ -7,36 +7,43 @@ from google.auth.transport.requests import Request
 
 logger = logging.getLogger(__name__)
 
-# SCOPES indica qué permisos vamos a pedir a Gmail
+# SCOPES defines the permissions we request from Gmail
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 def get_auth_token(credentials_path, token_path):
-	"""autenticación OAuth2"""
+	"""Authenticate using OAuth2"""
 	creds = None
 	
 	try:
-		# Si ya existe token.json (usuario ya se autenticó antes), lo cargamos en creds
+		# Load token.json if it exists (user has previously authenticated)
 		if os.path.exists(token_path):
 			creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+
+		# Refresh token if expired
 		if creds and creds.expired and creds.refresh_token:
 			try:
 				creds.refresh(Request())
 			except RefreshError:
-				logging.warning("Refresh token inválido. Se requiere nuevo login.")
+				logging.warning("Invalid refresh token. New login required.")
 				os.remove(token_path)
 				creds = None
-		# Si no hay credenciales válidas, pedimos login en el navegador
+
+		# Request login via browser if no valid credentials
 		if not creds or not creds.valid:
 			flow = InstalledAppFlow.from_client_secrets_file(
-				credentials_path, SCOPES)  # Tu archivo descargado de Google Cloud
-			creds = flow.run_local_server(port=0)  # Abre el navegador y pide permisos
-			# Guardamos token.json para no pedir login la próxima vez
+				credentials_path, SCOPES)  # Client secrets file downloaded from Google Cloud
+			creds = flow.run_local_server(port=0)  # Opens browser to request permissions
+
+			# Save token.json to avoid re-login next time
 			with open(token_path, 'w') as token:
 				token.write(creds.to_json())
+
 		return creds
+
 	except FileNotFoundError:
-		logger.error("No se encontró credentials.json. Verifica la ruta.")
+		logger.error("credentials.json not found. Please verify the path.")
 		raise
+
 	except Exception as e:
-		logger.critical(f"Error durante la autenticación: {e}")
+		logger.critical(f"Authentication error: {e}")
 		raise
