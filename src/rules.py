@@ -1,7 +1,7 @@
 RULES = [
 	{
 		"name": "Empleo_alertas",
-		"priority": 100,
+		"priority": 95,
 		"conditions": [
 			{
 				"sender_contains": ["jobalerts-noreply@linkedin.com", "jobs-listings@linkedin.com", "glassdoor.com", "jobs2web.com"]
@@ -38,7 +38,7 @@ RULES = [
 	},
 	{
 		"name": "Formación",
-		"priority": 100,
+		"priority": 80,
 		"conditions": [
 			{
 				"sender_contains": ["coursera.org", "udemy", "edx"]
@@ -52,7 +52,7 @@ RULES = [
 	},
 	{
 		"name": "Servicios",
-		"priority": 100,
+		"priority": 80,
 		"conditions": [
 			{
 				"sender_contains": ["endesa.com", "endesaclientes.com",  "o2online.es", "redexis.es"]
@@ -108,7 +108,7 @@ RULES = [
 	},
 	{
 		"name": "Familia",
-		"priority": 80,
+		"priority": 100,
 		"conditions": [
 			{
 				"sender_contains": ["mcmichaelson", "miguel.vidal.hernando", "miguelvidalhernando", "ignacio.vidal.hernando", "ignaciovidalhernando", "murrayhead85", "bovido55", "celiahernandodefrutos", "vincenza.verdicchio"]

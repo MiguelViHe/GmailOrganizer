@@ -5,8 +5,7 @@ from logging.handlers import TimedRotatingFileHandler
 from dotenv import load_dotenv
 from auth import get_auth_token
 from gmail_service import gmail_api_connection
-from organizer import get_actions, apply_actions, extract_mail_data
-from utils import create_label
+from jobs.job_classify_recent import job_classify_recent
 
 logger = logging.getLogger(__name__)
 
@@ -60,11 +59,6 @@ def setup_logging():
 		logging.getLogger("google.auth").setLevel(logging.WARNING)
 		logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
-def get_labels_map(service):
-	"""Return a dictionary mapping label names to their IDs"""
-	labels = service.users().labels().list(userId="me").execute().get("labels", [])
-	return {label["name"]: label["id"] for label in labels}
-
 def run():
 	credentials_path = os.getenv("CREDENTIALS_PATH", "credentials/credentials.txt")
 	token_path = os.getenv("TOKEN_PATH", "credentials/token.json")
@@ -72,36 +66,10 @@ def run():
 	# Obtain authorization using the previously stored token if available,
 	# otherwise request login and save token for future use.
 	creds = get_auth_token(credentials_path, token_path)
-	
 	# Connect to the Gmail API by creating the service object
 	service = gmail_api_connection(creds)
 
-	# Fetch the latest 10 emails (maxResults=10) or using a date query (newer...)
-	date = os.getenv("DATE", "newer_than:1d -label:Processed")
-	results = service.users().messages().list(userId='me', q=date).execute()
-	logger.debug(results) 
-	messages = results.get('messages', [])
-	logger.debug(messages)
-	
-	if not messages:
-		logger.info("No emails available.")
-	else:
-		labels_map = get_labels_map(service)
-		if not labels_map.get("Processed"):
-			create_label("Processed", "show", "labelHide", service, labels_map)
-		logger.debug(labels_map)
-		
-		for msg in messages:
-			try:
-				m = service.users().messages().get(userId='me', id=msg['id']).execute()
-				mail_data = extract_mail_data(m)
-				actions = get_actions(mail_data)
-				if actions:
-					logger.debug(f"ACTIONS: {actions}")
-					apply_actions(service, msg["id"], actions, mail_data, labels_map)
-					logger.info(f"Applied actions to msg_id={msg['id']} {mail_data['sender']}: {mail_data['subject']}")
-			except Exception as e:
-				logger.error(f"Error reading message {msg['id']}: {e}")
+	job_classify_recent(service)
 
 def main():
 	setup_logging()

@@ -17,3 +17,8 @@ def create_label(name, messageListVisibility, labelListVisibility, service, labe
 	labels_map[name] = label_id
 
 	return label_id
+
+def get_labels_map(service):
+	"""Return a dictionary mapping label names to their IDs"""
+	labels = service.users().labels().list(userId="me").execute().get("labels", [])
+	return {label["name"]: label["id"] for label in labels}
