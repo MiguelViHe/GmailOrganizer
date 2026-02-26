@@ -1,13 +1,21 @@
 import sys
 import os
+import argparse
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from dotenv import load_dotenv
 from auth import get_auth_token
 from gmail_service import gmail_api_connection
 from jobs.job_classify_recent import job_classify_recent
+from jobs.job_mark_old_as_read import job_mark_old_as_read
 
 logger = logging.getLogger(__name__)
+
+def get_args():
+	"""Parse command line arguments"""
+	parser = argparse.ArgumentParser(description="Gmail Organizer")
+	parser.add_argument("job", type=str, help="Job to run (valid options: [classify_recent])")
+	return parser.parse_args()
 
 def setup_logging():
 	"""Load environment variables from .env and configure logging"""
@@ -59,7 +67,7 @@ def setup_logging():
 		logging.getLogger("google.auth").setLevel(logging.WARNING)
 		logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
-def run():
+def run(args):
 	credentials_path = os.getenv("CREDENTIALS_PATH", "credentials/credentials.txt")
 	token_path = os.getenv("TOKEN_PATH", "credentials/token.json")
 	
@@ -69,12 +77,18 @@ def run():
 	# Connect to the Gmail API by creating the service object
 	service = gmail_api_connection(creds)
 
-	job_classify_recent(service)
+	if args.job == "classify_recent":
+		job_classify_recent(service)
+	elif args.job == "mark_old_as_read":
+		job_mark_old_as_read(service)
+	else:
+		logger.warning(f"Unknown job: {args.job}")
 
 def main():
 	setup_logging()
+	args = get_args()
 	try:
-		run()
+		run(args)
 	except Exception as e:
 		logger.critical(f"Fatal error: {e}")
 		sys.exit(1)

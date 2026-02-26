@@ -6,11 +6,9 @@ from utils import get_labels_map, create_label
 logger = logging.getLogger(__name__)
 
 def job_classify_recent(service):
-	"""Job that classifies recent emails using classify_mail"""
-	print("entro")
-	# Consult last emails based on the DATE environment variable, defaulting to "newer_than:1d -label:Processed"
-	date = os.getenv("DATE", "newer_than:1d -label:Processed")
-	results = service.users().messages().list(userId='me', q=date).execute()
+	"""Job that classifies recent emails based on the CLASSIFY environment variable, (defaulting to "newer_than:1d -label:Processed")"""
+	query = os.getenv("CLASSIFY", "newer_than:1d -label:Processed")
+	results = service.users().messages().list(userId='me', q=query).execute()
 	messages = results.get('messages', [])
 
 	if not messages:
@@ -26,7 +24,8 @@ def job_classify_recent(service):
 	for msg in messages:
 		try:
 			full_msg = service.users().messages().get(userId='me', id=msg['id']).execute()
-			classify_mail(service, full_msg, labels_map)
-			logger.info(f"Processed msg_id={msg['id']}")
+			mail_data = classify_mail(service, full_msg, labels_map)
+			if mail_data:
+				logger.info(f"Processed msg_id={msg['id']}: {mail_data['subject']} from {mail_data['sender']}")
 		except Exception as e:
 			logger.error(f"Error processing message {msg['id']}: {e}") 
