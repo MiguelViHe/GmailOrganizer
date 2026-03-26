@@ -77,7 +77,8 @@ def run(args):
 	# The user must run the bootstrap_auth.py script to generate a valid token.json before running this main script.
 	creds = get_auth_token(token_path)
 	if creds is None:
-		return
+		logger.critical("No valid credentials available. Exiting.")
+		sys.exit(1)
 	# Connect to the Gmail API by creating the service object
 	service = gmail_api_connection(creds)
 

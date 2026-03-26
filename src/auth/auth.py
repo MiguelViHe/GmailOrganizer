@@ -28,10 +28,13 @@ def refresh_token(creds, token_path):
 		with open(token_path, "w") as token:
 			token.write(creds.to_json())
 		logger.info("Token refreshed successfully.")
-		
+
 		return creds
 	except RefreshError:
-		logger.critical("Invalid refresh token. Manual re-authentication required.")
+		logger.critical(
+			"No valid credentials available.\n"
+			"👉 Run: python auth/bootstrap_auth.py"
+		)
 		return None
 
 def get_auth_token(token_path):
@@ -44,7 +47,7 @@ def get_auth_token(token_path):
 		creds = refresh_token(creds, token_path)
 
 		if not creds:
-			logger.critical("No valid credentials. Run: python auth/bootstrap_auth.py")
+			logger.critical("Stopping execution due to authentication failure.")
 			return None
 		return creds
 
