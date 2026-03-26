@@ -4,7 +4,7 @@ RULES = [
 		"priority": 95,
 		"conditions": [
 			{
-				"sender_contains": ["jobalerts-noreply@linkedin.com", "jobs-listings@linkedin.com", "glassdoor.com", "jobs2web.com"]
+				"sender_contains": ["jobalerts-noreply@linkedin.com", "jobs-listings@linkedin.com", "glassdoor.com", "jobs2web.com", "welcometothejungle.com"]
 			},
 			{
 				"subject_contains": ["Nuevos empleos"]
@@ -21,7 +21,7 @@ RULES = [
 		"priority": 90,
 		"conditions": [
 			{
-				"sender_contains": ["linkedin.com", "infojobs.net", "HRsystem@capgemini.com"]
+				"sender_contains": ["recruitment", "linkedin.com", "infojobs.net", "HRsystem@capgemini.com", "teamtailor-mail.com", "viterbit-mail.com", "successfactors.eu", "greenhouse-mail.io"]
 			},
 			{
 				"subject_contains": ["solicitud de empleo", "se ha enviado tu solicitud"]
@@ -89,11 +89,15 @@ RULES = [
 		"priority": 40,
 		"conditions": [
 			{
+				"sender_contains": ["carrefour"]
+			},
+			{
 				"subject_contains": 
 				[
 					"Confirmación de pedido", "Recibo de tu pedido", "Recibo de tu pedido",
 					"Recibo de su pago", "pago aceptado", "Pedido en preparación", "Pedido enviado",
-					"Información sobre su envío"
+					"Información sobre su envío", "tu factura", "ticket de compra", "factura de compra",
+					"Factura de tu pedido", "Factura de su pedido", "Factura de compra", "Factura de tu compra"
 				]
 			},
 			{
@@ -128,10 +132,10 @@ RULES = [
 				"has_unsubscribe_header": True
 			},
 			{
-				"subject_contains": ["oferta", "promo", "descuento"]
+				"subject_contains": ["promo", "descuento"]
 			},
 			{
-				"body_contains": ["oferta", "promo", "descuento","unsubscribe", "Darme de baja", "Darse de baja", "no deseas seguir recibiendo", "cancelar tu suscripción", "Cancelar suscripción"],
+				"body_contains": ["promo", "descuento","unsubscribe", "Darme de baja", "Darse de baja", "no deseas seguir recibiendo", "cancelar tu suscripción", "Cancelar suscripción"],
 			}
 		],
 		"actions": {
@@ -145,7 +149,7 @@ RULES = [
 		"priority": 30,
 		"conditions": [
 			{
-				"sender_contains": ["circuito4desafios", "inscripciones@youevent.com.es", "no-reply@rockthesport.com"]
+				"sender_contains": ["circuito4desafios", "inscripciones@youevent.com.es", "no-reply@rockthesport.com", "garmin.com", "wikiloc.com", "strava.com", "corredorespopulares.com", "marathon.es", "maratonmadrid.com", "rockthesport.com", "spartanrace.es", "spartan.com"]
 			},
 			{
 				"body_contains": ["Marathon", "Maratón", "Trail","medalla finisher", "finisher", "recogida de dorsales", "no federado"]
@@ -153,6 +157,34 @@ RULES = [
 		],
 		"actions": {
 			"add_label": "Running",
+			"archive": True,
+			"mark_as_read": False
+		}
+	},
+	{
+		"name": "eBiblio",
+		"priority": 30,
+		"conditions": [
+			{
+				"sender_contains": ["eBiblio"]
+			}
+		],
+		"actions": {
+			"add_label": "eBiblio",
+			"archive": True,
+			"mark_as_read": False
+		}
+	},
+	{
+		"name": "Bancos",
+		"priority": 85,
+		"conditions": [
+			{
+				"sender_contains": ["revolut.com", "bbva.com"]
+			}
+		],
+		"actions": {
+			"add_label": "Bancos",
 			"archive": True,
 			"mark_as_read": False
 		}

@@ -1,10 +1,12 @@
-import sys
-import os
 import argparse
 import logging
+import os
+import sys
 from logging.handlers import TimedRotatingFileHandler
+
 from dotenv import load_dotenv
-from auth import get_auth_token
+
+from auth.auth import get_auth_token
 from gmail_service import gmail_api_connection
 from jobs.job_classify_recent import job_classify_recent
 from jobs.job_mark_old_as_read import job_mark_old_as_read
@@ -68,12 +70,14 @@ def setup_logging():
 		logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 def run(args):
-	credentials_path = os.getenv("CREDENTIALS_PATH", "credentials/credentials.txt")
 	token_path = os.getenv("TOKEN_PATH", "credentials/token.json")
 	
-	# Obtain authorization using the previously stored token if available,
-	# otherwise request login and save token for future use.
-	creds = get_auth_token(credentials_path, token_path)
+	# Obtain authorization using the previously stored token if available
+	# If not available or invalid, it will return None and the program will exit.
+	# The user must run the bootstrap_auth.py script to generate a valid token.json before running this main script.
+	creds = get_auth_token(token_path)
+	if creds is None:
+		return
 	# Connect to the Gmail API by creating the service object
 	service = gmail_api_connection(creds)
 
