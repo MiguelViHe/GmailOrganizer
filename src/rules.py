@@ -21,7 +21,7 @@ RULES = [
 		"priority": 90,
 		"conditions": [
 			{
-				"sender_contains": ["recruitment", "linkedin.com", "infojobs.net", "HRsystem@capgemini.com", "teamtailor-mail.com", "viterbit-mail.com", "successfactors.eu", "greenhouse-mail.io"]
+				"sender_contains": ["recruitment", "linkedin.com", "infojobs.net", "HRsystem@capgemini.com", "teamtailor-mail.com", "viterbit-mail.com", "successfactors.eu", "greenhouse-mail.io", "careers-noreply@telefonica.com", "santander@myworkday.com"]
 			},
 			{
 				"subject_contains": ["solicitud de empleo", "se ha enviado tu solicitud"]
