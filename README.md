@@ -118,7 +118,8 @@ Workflow:
 
 1. extract email metadata
 2. evaluate classification rules
-3. apply corresponding actions
+3. check the aplied rules priorities for a email and select the actions of the rules with higher priority.
+4. apply corresponding actions
 
 ---
 
@@ -340,9 +341,7 @@ The rule engine is designed to be easily extendable. New classification rules ca
 
 Future extensions could include:
 
-* rule prioritization
 * rule indexing for faster evaluation
-* configuration-driven rules (e.g. JSON or YAML)
 * machine learning based classification
 
 ---
@@ -375,7 +374,6 @@ This project explores practical topics frequently encountered in backend and dat
 Potential extensions include:
 
 * machine learning based email classification
-* persistence layer for processed messages
 * Docker containerization
 * monitoring and metrics
 
