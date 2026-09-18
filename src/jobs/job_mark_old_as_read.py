@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 def job_mark_old_as_read(service):
 	"""Job that marks old emails as read based on a query defined in the environment variable OLD_EMAIL_READ (defaulting to "older_than:30d label:Processed")"""
-	query = os.getenv("OLD_EMAIL_READ", "older_than:30d label:Processed label:Promos is:unread")
+	query = os.getenv("OLD_EMAIL_READ", "older_than:30d label:Processed label:Empleo_alertas is:unread")
 	results = service.users().messages().list(userId='me', q=query).execute()
 	messages = results.get('messages', [])
 

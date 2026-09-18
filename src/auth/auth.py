@@ -19,9 +19,11 @@ def load_token(token_path):
 
 def refresh_token(creds, token_path):
 	"""Try to refresh credentials if possible"""
-	if not creds or not creds.expired or not creds.refresh_token:
+	if not creds or not creds.expired:
 		return creds
 	try:
+		if not creds.refresh_token:
+			raise RefreshError("No refresh token available")
 		creds.refresh(Request())
 
 		# Save the refreshed token back to token.json
@@ -30,10 +32,11 @@ def refresh_token(creds, token_path):
 		logger.info("Token refreshed successfully.")
 
 		return creds
-	except RefreshError:
+	except RefreshError as e:
 		logger.critical(
 			"No valid credentials available.\n"
-			"👉 Run: python auth/bootstrap_auth.py"
+			f"Refresh error: {e}\n"
+			"👉 Run: python src/auth/bootstrap_auth.py"
 		)
 		return None
 
@@ -49,6 +52,7 @@ def get_auth_token(token_path):
 		if not creds:
 			logger.critical("Stopping execution due to authentication failure.")
 			return None
+		
 		return creds
 
 	except Exception as e:
