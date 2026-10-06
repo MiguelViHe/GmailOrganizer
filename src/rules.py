@@ -1,5 +1,5 @@
 RULES = [
-    {
+	{
 		"name": "Entrevistas",
 		"priority": 100,
 		"conditions": [
@@ -38,7 +38,11 @@ RULES = [
 		"priority": 90,
 		"conditions": [
 			{
-				"sender_contains": ["recruitment", "linkedin.com", "infojobs.net", "HRsystem@capgemini.com", "teamtailor-mail.com", "viterbit-mail.com", "successfactors.eu", "successfactors.com", "greenhouse-mail.io", "careers-noreply@telefonica.com", "santander@myworkday.com", "ust.com", "notifications@ats.bizneo.com", "no-reply@msg.join.com", "seekingyou@talent.altia.es"]
+				"sender_contains": ["recruitment", "linkedin.com", "infojobs.net", "HRsystem@capgemini.com",
+                "teamtailor-mail.com", "viterbit-mail.com", "successfactors.eu", "successfactors.com",
+                "greenhouse-mail.io", "careers-noreply@telefonica.com", "santander@myworkday.com", "ust.com",
+                "notifications@ats.bizneo.com", "no-reply@msg.join.com", "seekingyou@talent.altia.es",
+                "adeccoseleccion@adecco.com", "teamsystem@myworkday.com"]
 			},
 			{
 				"subject_contains": ["solicitud de empleo", "se ha enviado tu solicitud"]
@@ -114,11 +118,12 @@ RULES = [
 					"Confirmación de pedido", "Confirmación de venta", "Recibo de tu pedido", "Recibo de tu pedido",
 					"Recibo de su pago", "pago aceptado", "Pedido en preparación", "Pedido enviado",
 					"Información sobre su envío", "tu factura", "ticket de compra", "factura de compra",
-					"Factura de tu pedido", "Factura de su pedido", "Factura de compra", "Factura de tu compra", "resguardo de su envío"
+					"Factura de tu pedido", "Factura de su pedido", "Factura de compra", "Factura de tu compra", "resguardo de su envío",
+					"Gracias por tu compra"
 				]
 			},
 			{
-				"body_contains": ["resumen de pedido", "IMPORTE TOTAL", "precio total", "pago total", "MÉTODO DE PAGO", "Número de pedido", "Dirección de facturación", "Dirección de entrega", "Información de envío", "tu compra"]
+				"body_contains": ["resumen de pedido", "IMPORTE TOTAL", "precio total", "pago total", "MÉTODO DE PAGO", "Número de pedido", "Dirección de facturación", "Dirección de entrega", "Información de envío", "Dirección de envío", "ver mi pedido"]
 			}
 		],
 		"actions": {
