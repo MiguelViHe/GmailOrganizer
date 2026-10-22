@@ -39,10 +39,11 @@ RULES = [
 		"conditions": [
 			{
 				"sender_contains": ["recruitment", "linkedin.com", "infojobs.net", "HRsystem@capgemini.com",
-                "teamtailor-mail.com", "viterbit-mail.com", "successfactors.eu", "successfactors.com",
-                "greenhouse-mail.io", "careers-noreply@telefonica.com", "santander@myworkday.com", "ust.com",
-                "notifications@ats.bizneo.com", "no-reply@msg.join.com", "seekingyou@talent.altia.es",
-                "adeccoseleccion@adecco.com", "teamsystem@myworkday.com"]
+				"teamtailor-mail.com", "viterbit-mail.com", "successfactors.eu", "successfactors.com",
+				"greenhouse-mail.io", "careers-noreply@telefonica.com", "santander@myworkday.com", "ust.com",
+				"notifications@ats.bizneo.com", "no-reply@msg.join.com", "seekingyou@talent.altia.es",
+				"adeccoseleccion@adecco.com", "teamsystem@myworkday.com", "noreply@madrid.org", "Bosch Group",
+				"notification@smartrecruiters.com", "HR@gmv.com"]
 			},
 			{
 				"subject_contains": ["solicitud de empleo", "se ha enviado tu solicitud"]
@@ -53,6 +54,26 @@ RULES = [
 		],
 		"actions": {
 			"add_label": "Empleo",
+			"archive": True,
+			"mark_as_read": False
+		}
+	},
+	{
+		"name": "DemandaEmpleoMadrid",
+		"priority": 89,
+		"conditions": [
+			{
+				"sender_contains": ["sieprod@madrid.org", "notificaciones@madrid.org"]
+			},
+			{
+				"subject_contains": []
+			},
+			{
+				"body_contains": []
+			}
+		],
+		"actions": {
+			"add_label": "DemandaEmpleoMadrid",
 			"archive": True,
 			"mark_as_read": False
 		}
@@ -76,7 +97,7 @@ RULES = [
 		"priority": 80,
 		"conditions": [
 			{
-				"sender_contains": ["endesa.com", "endesaclientes.com",  "o2online.es", "redexis.es"]
+				"sender_contains": ["endesa.com", "endesaclientes.com",  "o2online.es", "redexis.es", "apple.com"]
 			}
 		],
 		"actions": {
@@ -110,7 +131,8 @@ RULES = [
 		"priority": 40,
 		"conditions": [
 			{
-				"sender_contains": ["carrefour", "ventaOnline@renfe.es", "correos@correos.com", "ETServer@iberia.es", "info@w.cinesa.es"]
+				"sender_contains": ["carrefour", "ventaOnline@renfe.es", "correos@correos.com", "ETServer@iberia.es", "info@w.cinesa.es",
+                                    "itevelesa"]
 			},
 			{
 				"subject_contains": 
